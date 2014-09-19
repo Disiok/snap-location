@@ -1,16 +1,28 @@
 package com.hackthenorth.snaplocation;
 
 import android.app.Activity;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 public class MainActivity extends Activity {
+	Camera mCamera;
+	CameraView mCameraView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+        // Create an instance of Camera
+        mCamera = Utils.getCameraInstance();
+        
+        // Create our Preview view and set it as the content of our activity.
+        mCameraView = new CameraView(this, mCamera);
+        FrameLayout cameraViewContainer = (FrameLayout) findViewById(R.id.camera_preview);
+        cameraViewContainer.addView(mCameraView);
 	}
 
 	@Override
