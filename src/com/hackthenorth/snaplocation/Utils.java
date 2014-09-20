@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 

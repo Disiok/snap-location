@@ -1,9 +1,21 @@
 package com.hackthenorth.snaplocation;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -43,12 +55,14 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				boolean saved = Utils.saveOutputMedia(data);
-				if (saved) {
-					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
-				}
+				UploadMediaTask updateMediaTask = new UploadMediaTask(data);
+				updateMediaTask.execute();
+//				boolean saved = Utils.saveOutputMedia(data);
+//				if (saved) {
+//					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
+//				} else {
+//					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
+//				}
 			}
 		};
 	}
@@ -89,6 +103,48 @@ public class MainActivity extends Activity {
 		}
 		// Release preview
 		mPreview.setCamera(null);
+	}
+	public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
+		private byte[] mData;
+		
+		public UploadMediaTask(byte[] data) {
+			super();
+			mData = data;
+		}
+		
+		@Override
+		protected Boolean doInBackground(Void... params) {
+	        try {
+	            HttpClient httpClient = new DefaultHttpClient();
+	            HttpPost postRequest = new HttpPost(
+	                    "http://test.tniechciol.ca:12345/snap_location/test/");
+
+	            postRequest.setEntity(new ByteArrayEntity(mData));
+	            HttpResponse response = httpClient.execute(postRequest);
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(
+	                    response.getEntity().getContent(), "UTF-8"));
+	            String sResponse;
+	            StringBuilder s = new StringBuilder();
+	 
+	            while ((sResponse = reader.readLine()) != null) {
+	                s = s.append(sResponse);
+	            }
+	            Log.d(TAG, "Response: " + s);
+	            return true;
+	        } catch (Exception e) {
+	            // handle exception here
+	            Log.e(e.getClass().getName(), e.getMessage());
+	            return false;
+	        }
+		}
+
+	     protected void onPostExecute(Boolean success) {
+	    	 if (success) {
+	    		 
+	    	 } else {
+	    		 
+	    	 }
+	     }
 	}
 
 
