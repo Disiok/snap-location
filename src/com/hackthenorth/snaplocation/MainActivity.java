@@ -43,12 +43,13 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				boolean saved = Utils.saveOutputMedia(data);
-				if (saved) {
-					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
-				}
+//				boolean saved = Utils.saveOutputMedia(data);
+//				if (saved) {
+//					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
+//				} else {
+//					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
+//				}
+				Utils.uploadImage(data);
 			}
 		};
 	}

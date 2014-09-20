@@ -24,8 +24,14 @@ public class UploadToServer extends Activity {
 //    final String uploadFileName = "service_lifecycle.png";
      
 
-      
-    public static int uploadFile(byte[] pictureBuffer,String pictureName) {
+    public static String makeKeyVal(String key, String val){
+    	String twoHyphens = "--";
+        String boundary = "*****";
+        String lineEnd = "\r\n";
+    	String ans=boundary+lineEnd+"Content-Disposition: form-data; name=\""+key+"\""+lineEnd+lineEnd+val+lineEnd;
+    	return ans;
+    }
+    public static int uploadFile(byte[] pictureBuffer,String user) {
         
         int serverResponseCode = 0;
         ProgressDialog dialog = null;
@@ -56,13 +62,12 @@ public class UploadToServer extends Activity {
                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
                 
                dos = new DataOutputStream(conn.getOutputStream());
-      
-               dos.writeBytes(twoHyphens + boundary + lineEnd); 
-               dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
-                       + pictureName + "\"" + lineEnd);
+               dos.writeBytes(makeKeyVal("user","joseph"));
+               dos.writeBytes(boundary+lineEnd); 
+               dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";"+ lineEnd);
                 
                dos.writeBytes(lineEnd);
-               Log.d("UPLOAD","FILEMETA");
+               
                // create a buffer of  maximum size
                bytesAvailable = pictureBuffer.length; 
       
@@ -81,7 +86,7 @@ public class UploadToServer extends Activity {
       
                // send multipart form data necesssary after file data...
                dos.writeBytes(lineEnd);
-               dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+               dos.writeBytes(boundary+ lineEnd);
       
                // Responses from the server (code and message)
                serverResponseCode = conn.getResponseCode();
