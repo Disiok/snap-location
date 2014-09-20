@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,6 +88,15 @@ public class PreviewFragment extends Fragment {
 		// Bind camera
 		mCamera = Utils.getCameraInstance();
 		
+		// Use auto focus
+		Camera.Parameters parameters = mCamera.getParameters();
+		List<String> focusModes = parameters.getSupportedFocusModes();
+		if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+		    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+		    Log.d(TAG, "Camera auto focus enabled");
+		}
+		mCamera.setParameters(parameters);
+		
 		// Bind preview
 		mPreview.setCamera(mCamera);
 		
@@ -94,7 +104,13 @@ public class PreviewFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// get an image from the camera
-				mCamera.takePicture(null, null, mPictureCallback);
+				mCamera.autoFocus(new AutoFocusCallback() {
+					@Override
+					public void onAutoFocus(boolean success, Camera camera) {
+						mCamera.takePicture(null, null, mPictureCallback);
+					}
+					
+				});
 			}
 		});
 		
