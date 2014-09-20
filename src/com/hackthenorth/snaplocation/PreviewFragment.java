@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 public class PreviewFragment extends Fragment {
 	public static final String TAG = PreviewFragment.class.getSimpleName();
@@ -34,6 +35,7 @@ public class PreviewFragment extends Fragment {
 	// View elements
 	Camera mCamera;
 	CameraPreview mPreview;
+	ImageView mCaptureButton;
 
 	PictureCallback mPictureCallback;
 	
@@ -49,6 +51,10 @@ public class PreviewFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
+		
+		// Resolve view elements
+		mCaptureButton = (ImageView) getView().findViewById(R.id.capture_button);
+		
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(getActivity());
 		FrameLayout cameraViewContainer = (FrameLayout) getView().findViewById(R.id.camera_preview);
@@ -61,12 +67,6 @@ public class PreviewFragment extends Fragment {
 			public void onPictureTaken(byte[] data, Camera camera) {
 				UploadMediaTask updateMediaTask = new UploadMediaTask(data);
 				updateMediaTask.execute();
-//				boolean saved = Utils.saveOutputMedia(data);
-//				if (saved) {
-//					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
-//				} else {
-//					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
-//				}
 			}
 		};
 	}
@@ -90,7 +90,7 @@ public class PreviewFragment extends Fragment {
 		// Bind preview
 		mPreview.setCamera(mCamera);
 		
-		((MainActivity) getActivity()).getCaptureButton().setOnClickListener(new OnClickListener() {
+		mCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// get an image from the camera

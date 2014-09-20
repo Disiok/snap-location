@@ -65,7 +65,8 @@ public class FriendFragment extends Fragment{
 	
 	public void resolveFriends() {
 		mFriends = new ArrayList<Friend>();
-		new ResolveFriendsTask().execute("htn");
+		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask();
+		resolveFriendTask.execute("htn");
 	}
 	public class ResolveFriendsTask extends AsyncTask<String, Void, Boolean> {
 

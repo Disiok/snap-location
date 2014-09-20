@@ -43,7 +43,7 @@ public class FriendListAdapter extends BaseAdapter{
 		}
 		
 		Friend friend = (Friend) getItem(position);
-		((TextView) view.findViewById(R.id.friend_unique_id)).setText(friend.getUniqueName());
+		((TextView) view.findViewById(R.id.friend_unique_id)).setText(friend.getDisplayName());
         return view;
 	}
 
