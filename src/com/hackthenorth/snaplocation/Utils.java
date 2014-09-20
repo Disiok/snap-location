@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
@@ -46,7 +47,8 @@ public class Utils {
 				.format(new Date());
 		File mediaFile = new File(mediaStorageDir.getPath() + File.separator
 				+ "IMG_" + timeStamp + ".jpg");
-
+		//Log.d(TAG,mediaStorageDir);
+		
 		return mediaFile;
 	}
 
@@ -63,6 +65,7 @@ public class Utils {
 			outputStream.write(data);
 			outputStream.close();
 			Log.d(TAG, "Finished saving image");
+			new UploadImageTask(data,"abc.jpg").execute();
 			return true;
 		} catch (FileNotFoundException e) {
 			Log.d(TAG, "File not found: " + e.getMessage());
@@ -72,4 +75,5 @@ public class Utils {
 			return false;
 		}
 	}
+	
 }
