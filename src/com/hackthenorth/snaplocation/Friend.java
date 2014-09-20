@@ -1,7 +1,13 @@
 package com.hackthenorth.snaplocation;
 
 public class Friend {
-	public String getUniqueId() {
-		return "apple" + Math.random();
+	private String unique_name;
+	private String display_name;
+	
+	public String getUniqueName() {
+		return unique_name;
+	}
+	public String getDisplayName() {
+		return display_name;
 	}
 }

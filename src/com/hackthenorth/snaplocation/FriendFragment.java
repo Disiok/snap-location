@@ -12,6 +12,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import com.google.gson.Gson;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -82,15 +85,12 @@ public class FriendFragment extends Fragment{
 	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	            
 	            HttpResponse response = httpClient.execute(postRequest);
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(
-	                    response.getEntity().getContent(), "UTF-8"));
-	            String sResponse;
-	            StringBuilder s = new StringBuilder();
-	 
-	            while ((sResponse = reader.readLine()) != null) {
-	                s = s.append(sResponse);
-	            }
-	            Log.d(TAG, "Response: " + s);
+	            String jsonString = EntityUtils.toString(response.getEntity());
+	            
+	            Gson gson = new Gson();
+	            FriendResponse friendResponse = gson.fromJson(jsonString, FriendResponse.class);
+	            Friend[] friends = friendResponse.getFriends();
+	            
 	            return true;
 	        } catch (Exception e) {
 	            // handle exception here
