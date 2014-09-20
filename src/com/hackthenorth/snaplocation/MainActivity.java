@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+
 public class MainActivity extends Activity {
 	public static final String TAG = MainActivity.class.getSimpleName();
 
@@ -18,6 +21,7 @@ public class MainActivity extends Activity {
 	Camera mCamera;
 	CameraPreview mPreview;
 	Button mCaptureButton;
+	GoogleMap mGoogleMap;
 
 	PictureCallback mPictureCallback;
 
@@ -25,10 +29,10 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		// Set fullscreen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 		// Resolve view elements
 		mCaptureButton = (Button) findViewById(R.id.capture_button);
@@ -45,33 +49,38 @@ public class MainActivity extends Activity {
 			public void onPictureTaken(byte[] data, Camera camera) {
 				boolean saved = Utils.saveOutputMedia(data);
 				if (saved) {
-					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mPreview.getContext(),
+							"Image successfully saved", Toast.LENGTH_SHORT)
+							.show();
 				} else {
-					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mPreview.getContext(), "Error saving image",
+							Toast.LENGTH_SHORT).show();
 				}
 			}
 		};
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		bindCameraAndPreview();
+		initilizeMap();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		releaseCameraAndPreview(); // release the camera immediately on pause event
+		releaseCameraAndPreview(); // release the camera immediately on pause
+									// event
 	}
 
 	private void bindCameraAndPreview() {
 		// Bind camera
 		mCamera = Utils.getCameraInstance();
-		
+
 		// Bind preview
 		mPreview.setCamera(mCamera);
-		
+
 		mCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -79,8 +88,9 @@ public class MainActivity extends Activity {
 				mCamera.takePicture(null, null, mPictureCallback);
 			}
 		});
-		
+
 	}
+
 	private void releaseCameraAndPreview() {
 		// Release camera
 		if (mCamera != null) {
@@ -91,5 +101,17 @@ public class MainActivity extends Activity {
 		mPreview.setCamera(null);
 	}
 
+	private void initilizeMap() {
+		if (mGoogleMap == null) {
+			mGoogleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+			// check if map is created successfully or not
+			if (mGoogleMap == null) {
+				Toast.makeText(getApplicationContext(),
+						"Sorry! unable to create maps", Toast.LENGTH_SHORT)
+						.show();
+			}
+		}
+	}
 
 }
