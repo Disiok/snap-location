@@ -1,7 +1,6 @@
 package com.hackthenorth.snaplocation;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
@@ -15,56 +14,65 @@ import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 	public static final String TAG = MainActivity.class.getSimpleName();
 
 	// View elements
-	Camera mCamera;
-	CameraPreview mPreview;
-	Button mCaptureButton;
-
-	PictureCallback mPictureCallback;
+//	Camera mCamera;
+//	CameraPreview mPreview;
+//	Button mCaptureButton;
+//
+//	PictureCallback mPictureCallback;
+	
+	ViewPager mViewPager;
+	MainScreenPagerAdapter mPagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		// Set fullscreen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-		// Resolve view elements
-		mCaptureButton = (Button) findViewById(R.id.capture_button);
-
-		// Create our Preview view and set it as the content of our activity.
-		mPreview = new CameraPreview(this);
-		FrameLayout cameraViewContainer = (FrameLayout) findViewById(R.id.camera_preview);
-		cameraViewContainer.addView(mPreview);
-
-		// Create picture callback
-		mPictureCallback = new PictureCallback() {
-
-			@Override
-			public void onPictureTaken(byte[] data, Camera camera) {
-				UploadMediaTask updateMediaTask = new UploadMediaTask(data);
-				updateMediaTask.execute();
-//				boolean saved = Utils.saveOutputMedia(data);
-//				if (saved) {
-//					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
-//				} else {
-//					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
-//				}
-			}
-		};
+		
+		mViewPager = (ViewPager) findViewById(R.id.view_pager);
+		mPagerAdapter = new MainScreenPagerAdapter(getSupportFragmentManager());
+		mViewPager.setAdapter(mPagerAdapter);
+//		
+//		// Set fullscreen
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//
+//		// Resolve view elements
+//		mCaptureButton = (Button) findViewById(R.id.capture_button);
+//
+//		// Create our Preview view and set it as the content of our activity.
+//		mPreview = new CameraPreview(this);
+//		FrameLayout cameraViewContainer = (FrameLayout) findViewById(R.id.camera_preview);
+//		cameraViewContainer.addView(mPreview);
+//
+//		// Create picture callback
+//		mPictureCallback = new PictureCallback() {
+//
+//			@Override
+//			public void onPictureTaken(byte[] data, Camera camera) {
+//				UploadMediaTask updateMediaTask = new UploadMediaTask(data);
+//				updateMediaTask.execute();
+////				boolean saved = Utils.saveOutputMedia(data);
+////				if (saved) {
+////					Toast.makeText(mPreview.getContext(), "Image successfully saved", Toast.LENGTH_SHORT).show();
+////				} else {
+////					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
+////				}
+//			}
+//		};
 	}
 	
 	@Override
@@ -80,29 +88,29 @@ public class MainActivity extends Activity {
 	}
 
 	private void bindCameraAndPreview() {
-		// Bind camera
-		mCamera = Utils.getCameraInstance();
-		
-		// Bind preview
-		mPreview.setCamera(mCamera);
-		
-		mCaptureButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// get an image from the camera
-				mCamera.takePicture(null, null, mPictureCallback);
-			}
-		});
+//		// Bind camera
+//		mCamera = Utils.getCameraInstance();
+//		
+//		// Bind preview
+//		mPreview.setCamera(mCamera);
+//		
+//		mCaptureButton.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				// get an image from the camera
+//				mCamera.takePicture(null, null, mPictureCallback);
+//			}
+//		});
 		
 	}
 	private void releaseCameraAndPreview() {
-		// Release camera
-		if (mCamera != null) {
-			mCamera.release(); // release the camera for other applications
-			mCamera = null;
-		}
-		// Release preview
-		mPreview.setCamera(null);
+//		// Release camera
+//		if (mCamera != null) {
+//			mCamera.release(); // release the camera for other applications
+//			mCamera = null;
+//		}
+//		// Release preview
+//		mPreview.setCamera(null);
 	}
 	public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 		private byte[] mData;
@@ -140,9 +148,9 @@ public class MainActivity extends Activity {
 
 	     protected void onPostExecute(Boolean success) {
 	    	 if (success) {
-	    		 
+	    		 Log.d(TAG, "Successfully uploaded an image to the server");
 	    	 } else {
-	    		 
+	    		 Log.d(TAG, "Uploading an image to the server failed");
 	    	 }
 	     }
 	}
