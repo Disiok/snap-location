@@ -3,6 +3,7 @@ package com.hackthenorth.snaplocation;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -64,11 +65,6 @@ public class FriendFragment extends Fragment{
 	
 	public void resolveFriends() {
 		mFriends = new ArrayList<Friend>();
-		// TODO: Get friend list from back end
-		// But for now, use randoms
-		for (int i = 0; i < 15; i ++) {
-			mFriends.add(new Friend());
-		}
 		new ResolveFriendsTask().execute("htn");
 	}
 	public class ResolveFriendsTask extends AsyncTask<String, Void, Boolean> {
@@ -76,6 +72,7 @@ public class FriendFragment extends Fragment{
 		@Override
 		protected Boolean doInBackground(String... params) {
 	        try {
+	        	// Send requests
 	        	String uniqueName = params[0];
 	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	            nameValuePairs.add(new BasicNameValuePair("unique_name", uniqueName));
@@ -84,12 +81,12 @@ public class FriendFragment extends Fragment{
 	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/friends/");
 	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	            
+	            // Handle response
 	            HttpResponse response = httpClient.execute(postRequest);
 	            String jsonString = EntityUtils.toString(response.getEntity());
 	            
-	            Gson gson = new Gson();
-	            FriendResponse friendResponse = gson.fromJson(jsonString, FriendResponse.class);
-	            Friend[] friends = friendResponse.getFriends();
+	            FriendResponse friendResponse = new Gson().fromJson(jsonString, FriendResponse.class);
+	            mFriends.addAll(Arrays.asList(friendResponse.getFriends()));
 	            
 	            return true;
 	        } catch (Exception e) {
@@ -101,9 +98,9 @@ public class FriendFragment extends Fragment{
 
 	     protected void onPostExecute(Boolean success) {
 	    	 if (success) {
-	    		 Log.d(TAG, "Successfully get user");
+	    		 Log.d(TAG, "Successfully obtained friend list");
 	    	 } else {
-	    		 Log.d(TAG, "get user failed");
+	    		 Log.d(TAG, "Error obtaining friend list");
 	    	 }
 	     }
 		
