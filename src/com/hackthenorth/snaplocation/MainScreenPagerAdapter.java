@@ -22,7 +22,7 @@ public class MainScreenPagerAdapter extends FragmentPagerAdapter{
 			return new PreviewFragment();
 		}
 		case FRAGMENT_INBOX: {
-			return new InboxFragment();
+			return new FriendFragment();
 		}
 		default:
 			Log.e(TAG, "Scrolling out of bound");
