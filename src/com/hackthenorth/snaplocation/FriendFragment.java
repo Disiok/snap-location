@@ -62,23 +62,25 @@ public class FriendFragment extends Fragment{
 	public void resolveFriends() {
 		mFriends = new ArrayList<Friend>();
 		// TODO: Get friend list from back end
-		// But for now
+		// But for now, use randoms
 		for (int i = 0; i < 15; i ++) {
 			mFriends.add(new Friend());
 		}
+		new ResolveFriendsTask().execute("htn");
 	}
-	public class AddUserTask extends AsyncTask<Void, Integer, Boolean> {
+	public class ResolveFriendsTask extends AsyncTask<String, Void, Boolean> {
+
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected Boolean doInBackground(String... params) {
 	        try {
+	        	String uniqueName = params[0];
 	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	            nameValuePairs.add(new BasicNameValuePair("display_name", "Hack the North"));
-	            nameValuePairs.add(new BasicNameValuePair("unique_name", "htn"));
+	            nameValuePairs.add(new BasicNameValuePair("unique_name", uniqueName));
 	            
 	            HttpClient httpClient = new DefaultHttpClient();
-	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/add_user/");
+	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/friends/");
 	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
+	            
 	            HttpResponse response = httpClient.execute(postRequest);
 	            BufferedReader reader = new BufferedReader(new InputStreamReader(
 	                    response.getEntity().getContent(), "UTF-8"));
@@ -99,10 +101,48 @@ public class FriendFragment extends Fragment{
 
 	     protected void onPostExecute(Boolean success) {
 	    	 if (success) {
-	    		 Log.d(TAG, "Successfully added user");
+	    		 Log.d(TAG, "Successfully get user");
 	    	 } else {
-	    		 Log.d(TAG, "Add user failed");
+	    		 Log.d(TAG, "get user failed");
 	    	 }
 	     }
+		
 	}
+//	public class AddUserTask extends AsyncTask<Void, Integer, Boolean> {
+//		@Override
+//		protected Boolean doInBackground(Void... params) {
+//	        try {
+//	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//	            nameValuePairs.add(new BasicNameValuePair("display_name", "Hack the North"));
+//	            nameValuePairs.add(new BasicNameValuePair("unique_name", "htn"));
+//	            
+//	            HttpClient httpClient = new DefaultHttpClient();
+//	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/add_user/");
+//	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//	            HttpResponse response = httpClient.execute(postRequest);
+//	            BufferedReader reader = new BufferedReader(new InputStreamReader(
+//	                    response.getEntity().getContent(), "UTF-8"));
+//	            String sResponse;
+//	            StringBuilder s = new StringBuilder();
+//	 
+//	            while ((sResponse = reader.readLine()) != null) {
+//	                s = s.append(sResponse);
+//	            }
+//	            Log.d(TAG, "Response: " + s);
+//	            return true;
+//	        } catch (Exception e) {
+//	            // handle exception here
+//	            Log.e(e.getClass().getName(), e.getMessage());
+//	            return false;
+//	        }
+//		}
+//
+//	     protected void onPostExecute(Boolean success) {
+//	    	 if (success) {
+//	    		 Log.d(TAG, "Successfully added user");
+//	    	 } else {
+//	    		 Log.d(TAG, "Add user failed");
+//	    	 }
+//	     }
+//	}
 }
