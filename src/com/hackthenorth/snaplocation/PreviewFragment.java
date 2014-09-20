@@ -132,7 +132,6 @@ public class PreviewFragment extends Fragment {
 	            
 	            HttpClient httpClient = new DefaultHttpClient();
 	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/upload_image/");
-	            MultipartEntity requestEntity = new MultipartEntity();
 	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 	            HttpResponse response = httpClient.execute(postRequest);
