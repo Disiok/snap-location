@@ -123,10 +123,16 @@ public class PreviewFragment extends Fragment {
 	        	String encoded = Base64.encodeToString(mData, Base64.DEFAULT);
 	        	
 	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	            nameValuePairs.add(new BasicNameValuePair("unique_name", "htn"));
+	            nameValuePairs.add(new BasicNameValuePair("recipients", "rec1|rec2|rec3|rec4"));
 	            nameValuePairs.add(new BasicNameValuePair("picture", encoded));
+	            nameValuePairs.add(new BasicNameValuePair("latitude", "45.2038123"));
+	            nameValuePairs.add(new BasicNameValuePair("longitude", "32.23829"));
+	            
 	            
 	            HttpClient httpClient = new DefaultHttpClient();
 	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/upload_image/");
+	            MultipartEntity requestEntity = new MultipartEntity();
 	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 	            HttpResponse response = httpClient.execute(postRequest);
