@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.util;
 
 import android.app.AlertDialog;
 import android.app.Service;

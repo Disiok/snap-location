@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;

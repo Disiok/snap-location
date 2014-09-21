@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.view;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,6 +12,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+
+import com.hackthenorth.snaplocation.R;
+import com.hackthenorth.snaplocation.R.id;
+import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.util.GPSTracker;
+import com.hackthenorth.snaplocation.util.UploadMediaTask;
+import com.hackthenorth.snaplocation.util.Utils;
 
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
