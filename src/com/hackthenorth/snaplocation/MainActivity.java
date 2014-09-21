@@ -13,14 +13,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -28,23 +26,20 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class MainActivity extends FragmentActivity {
 	public static final String TAG = MainActivity.class.getSimpleName();
-	
+
 	ViewPager mViewPager;
 	MainScreenPagerAdapter mPagerAdapter;
-	
+
 	// View elements
 	Camera mCamera;
 	CameraPreview mPreview;
 	View mPolaroidBorder;
 	ImageView mImageInbox;
-
 
 	PictureCallback mPictureCallback;
 
@@ -52,17 +47,17 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		mImageInbox = (ImageView) findViewById(R.id.image_inbox);
 		mPolaroidBorder = findViewById(R.id.polaroid_border);
 		mViewPager = (ViewPager) findViewById(R.id.view_pager);
 		mPagerAdapter = new MainScreenPagerAdapter(getSupportFragmentManager());
 		mViewPager.setAdapter(mPagerAdapter);
-		
+
 		// Set fullscreen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this);
 		FrameLayout cameraViewContainer = (FrameLayout) findViewById(R.id.camera_preview);
@@ -73,11 +68,23 @@ public class MainActivity extends FragmentActivity {
 
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
-				UploadMediaTask updateMediaTask = new UploadMediaTask(data);
-				updateMediaTask.execute();
+				GPSTracker gps = new GPSTracker(getBaseContext());
+				Log.d("Can",gps.canGetLocation()+"");
+				if(gps.canGetLocation()){
+					Log.d("Latitude", "" + gps.getLatitude());
+					Log.d("Longitude", "" + gps.getLongitude());
+					new UploadMediaTask(data, "htn", gps.getLatitude(), gps.getLongitude()).execute();
+				}
+				else{
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
+                    gps.showSettingsAlert();
+				}
 			}
 		};
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -93,23 +100,24 @@ public class MainActivity extends FragmentActivity {
 	private void bindCameraAndPreview() {
 		// Bind camera
 		mCamera = Utils.getCameraInstance();
-		
+
 		// Use auto focus
 		Camera.Parameters parameters = mCamera.getParameters();
 		List<String> focusModes = parameters.getSupportedFocusModes();
 		if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-		    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-		    Log.d(TAG, "Camera auto focus enabled");
+			parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+			Log.d(TAG, "Camera auto focus enabled");
 		}
 		mCamera.setParameters(parameters);
-		
+
 		// Bind preview
 		mPreview.setCamera(mCamera);
-		
+
 		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
-			public void onPageScrollStateChanged(int arg0) {}
+			public void onPageScrollStateChanged(int arg0) {
+			}
 
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
@@ -117,7 +125,7 @@ public class MainActivity extends FragmentActivity {
 					mPolaroidBorder.setAlpha(arg1);
 				} else {
 					mPolaroidBorder.setAlpha(1 - arg1);
-				}				
+				}
 			}
 
 			@Override
@@ -129,7 +137,7 @@ public class MainActivity extends FragmentActivity {
 						public void onAutoFocus(boolean success, Camera camera) {
 							mCamera.takePicture(null, null, mPictureCallback);
 						}
-						
+
 					});
 				} else {
 					new Handler().postDelayed(new Runnable() {
@@ -140,9 +148,9 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
-		
+
 	}
-	
+
 	private void releaseCameraAndPreview() {
 		// Release camera
 		if (mCamera != null) {
@@ -152,60 +160,8 @@ public class MainActivity extends FragmentActivity {
 		// Release preview
 		mPreview.setCamera(null);
 	}
-	public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
-		private byte[] mData;
-		
-		public UploadMediaTask(byte[] data) {
-			super();
-			mData = data;
-		}
-		
-		@Override
-		protected Boolean doInBackground(Void... params) {
-	        try {
-	            // Add your data
-	        	String encoded = Base64.encodeToString(mData, Base64.DEFAULT);
-	        	
-	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	            nameValuePairs.add(new BasicNameValuePair("unique_name", "htn"));
-	            nameValuePairs.add(new BasicNameValuePair("recipients", "rec1|rec2|rec3|rec4"));
-	            nameValuePairs.add(new BasicNameValuePair("picture", encoded));
-	            nameValuePairs.add(new BasicNameValuePair("latitude", "45.2038123"));
-	            nameValuePairs.add(new BasicNameValuePair("longitude", "32.23829"));
-	            
-	            
-	            HttpClient httpClient = new DefaultHttpClient();
-	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/upload_image/");
-	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-	            HttpResponse response = httpClient.execute(postRequest);
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(
-	                    response.getEntity().getContent(), "UTF-8"));
-	            String sResponse;
-	            StringBuilder s = new StringBuilder();
-	 
-	            while ((sResponse = reader.readLine()) != null) {
-	                s = s.append(sResponse);
-	            }
-	            Log.d(TAG, "Response: " + s);
-	            return true;
-	        } catch (Exception e) {
-	            // handle exception here
-	            Log.e(e.getClass().getName(), e.getMessage());
-	            return false;
-	        }
-		}
-
-	     protected void onPostExecute(Boolean success) {
-	    	 if (success) {
-	    		 Log.d(TAG, "Successfully uploaded an image to the server");
-	    	 } else {
-	    		 Log.d(TAG, "Uploading an image to the server failed");
-	    	 }
-	     }
-
+	public ViewPager getViewPager() {
+		return mViewPager;
 	}
-    public ViewPager getViewPager() {
-   	 return mViewPager;
-    }
 }
