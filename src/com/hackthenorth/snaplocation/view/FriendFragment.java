@@ -2,6 +2,8 @@ package com.hackthenorth.snaplocation.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -55,15 +57,29 @@ public class FriendFragment extends Fragment{
 	}
 	
 	public void resolveFriends() {
+		Log.d(TAG, "Resolving friends");
 		mFriends = new ArrayList<Friend>();
 		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask();
 		resolveFriendTask.execute("htn");
+	}
+	public class FriendComparator implements Comparator<Friend> {
+	    @Override
+	    public int compare(Friend o1, Friend o2) {
+	        if (o1.getNumberOfRoundsPending() > 0 && o2.getNumberOfRoundsPending() > 0) {
+	        	return o1.getDisplayName().compareTo(o2.getDisplayName());
+	        } else if (o1.getNumberOfRoundsPending() > 0) {
+	        	return -1;
+	        } else {
+	        	return 1;
+	        }
+	    }
 	}
 	public class ResolveFriendsTask extends AsyncTask<String, Void, Boolean> {
 
 		@Override
 		protected Boolean doInBackground(String... params) {
 	        try {
+	        	Log.d(TAG, "Sending request for friend list");
 	        	// Send requests
 	        	String uniqueName = params[0];
 	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -77,8 +93,10 @@ public class FriendFragment extends Fragment{
 	            HttpResponse response = httpClient.execute(postRequest);
 	            String jsonString = EntityUtils.toString(response.getEntity());
 	            
+	            Log.i("json_string", jsonString);
 	            FriendResponse friendResponse = new Gson().fromJson(jsonString, FriendResponse.class);
 	            mFriends.addAll(Arrays.asList(friendResponse.getFriends()));
+	            Collections.sort(mFriends, new FriendComparator());
 	            
 	            return true;
 	        } catch (Exception e) {
@@ -94,6 +112,8 @@ public class FriendFragment extends Fragment{
 	    	 } else {
 	    		 Log.d(TAG, "Error obtaining friend list");
 	    	 }
+	    	 
+	    	 mAdapter.notifyDataSetChanged();
 	     }
 		
 	}

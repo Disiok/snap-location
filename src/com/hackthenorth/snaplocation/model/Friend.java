@@ -9,6 +9,9 @@ public class Friend {
 		return unique_name;
 	}
 	public String getDisplayName() {
-		return display_name + "(" + num_rounds_pending + ")";
+		return display_name;
+	}
+	public int getNumberOfRoundsPending() {
+		return num_rounds_pending;
 	}
 }
