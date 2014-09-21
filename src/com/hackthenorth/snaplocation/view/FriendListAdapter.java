@@ -8,9 +8,11 @@ import com.hackthenorth.snaplocation.R.layout;
 import com.hackthenorth.snaplocation.model.Friend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
@@ -64,8 +66,22 @@ public class FriendListAdapter extends BaseAdapter{
 		((TextView) view.findViewById(R.id.friend_pending_rounds)).setText("" + friend.getNumberOfRoundsPending());
 		if (friend.getNumberOfRoundsPending() > 0) {
 			((TextView) view.findViewById(R.id.friend_pending_rounds)).setTextColor(Color.parseColor("#EEEEEE"));
+			view.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(mContext, GameActivity.class);
+					mContext.startActivity(intent);
+				}
+			});
 		} else {
 			((ImageView) view.findViewById(R.id.friend_counter_background)).setColorFilter(Color.parseColor("#FFFFFF"));
+			view.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(mContext, GameActivity.class);
+					mContext.startActivity(intent);
+				}
+			});
 		}
         return view;
 	}
