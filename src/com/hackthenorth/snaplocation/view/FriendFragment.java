@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -104,6 +105,11 @@ public class FriendFragment extends Fragment{
 					}
 				}
 				if (selected_friends.size() > 0) {
+					getActivity().getSupportFragmentManager().beginTransaction()
+						.add(R.id.preview_container, new LoadingFragment())
+						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+						.addToBackStack(null)
+						.commit();
 					new UploadMediaTask(
 							safeSelf.getActivity(),
 							mControlFragment.getLastPictureData(),

@@ -127,7 +127,7 @@ public class ControlFragment extends Fragment {
 							getActivity().getSupportFragmentManager().beginTransaction()
 								.add(R.id.preview_container, new FriendFragment(true, safeSelf))
 								.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK)
-								.addToBackStack("asdf")
+								.addToBackStack(null)
 								.commit();
 						}
 						else{

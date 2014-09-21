@@ -81,6 +81,7 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 			Log.d(TAG, "Error while uploading image");
 		}
 		mActivity.onBackPressed();
+		mActivity.onBackPressed();
 	}
 
 }
