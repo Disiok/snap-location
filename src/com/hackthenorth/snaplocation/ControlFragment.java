@@ -18,7 +18,7 @@ public class ControlFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// The last two arguments ensure LayoutParams are inflated
 		// properly.
-		View rootView = inflater.inflate(R.layout.fragment_preview, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_control, container, false);
 		return rootView;
 	}
 
