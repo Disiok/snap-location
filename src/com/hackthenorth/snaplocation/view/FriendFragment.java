@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -37,13 +39,40 @@ public class FriendFragment extends Fragment{
 	FriendListAdapter mAdapter;
 	ListView mListView;
 	ArrayList<Friend> mFriends;
+	boolean mFriendsSelectable = false;
+	
+	ControlFragment mControlFragment;
+	
+	public FriendFragment(boolean friendsSelectable) {
+		this(friendsSelectable, null);
+	}
+	
+	public FriendFragment(boolean friendsSelectable, ControlFragment controlFragment) {
+		super();
+		mFriendsSelectable = friendsSelectable;
+		mControlFragment = controlFragment;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// The last two arguments ensure LayoutParams are inflated
 		// properly.
 		View rootView = inflater.inflate(R.layout.fragment_friend, container, false);
+		if (mFriendsSelectable) {
+			rootView.setBackgroundColor(Color.parseColor("#99FFFFFF"));
+		} else {
+			((FrameLayout) rootView.findViewById(R.id.select_friends_header)).setVisibility(View.GONE);
+			((FrameLayout) rootView.findViewById(R.id.select_friends_button_area)).setVisibility(View.GONE);
+		}
 		return rootView;
+	}
+	
+	@Override
+	public void onDestroy() {
+		if (mControlFragment != null) {
+			mControlFragment.reactivateCamera();
+		}
+		super.onDestroy();
 	}
 	
 	@Override
@@ -51,7 +80,7 @@ public class FriendFragment extends Fragment{
 		super.onActivityCreated(savedInstanceState);
 		
 		resolveFriends();
-		mAdapter = new FriendListAdapter(getActivity(), mFriends);
+		mAdapter = new FriendListAdapter(getActivity(), mFriends, mFriendsSelectable);
 		mListView = (ListView) getView().findViewById(R.id.friend_list_view);
 		mListView.setAdapter(mAdapter);
 	}

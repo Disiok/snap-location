@@ -16,6 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.id;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.util.DisableableViewPager;
 import com.hackthenorth.snaplocation.util.GPSTracker;
 import com.hackthenorth.snaplocation.util.UploadMediaTask;
 import com.hackthenorth.snaplocation.util.Utils;
@@ -39,7 +40,7 @@ import android.widget.ImageView;
 public class MainActivity extends FragmentActivity {
 	public static final String TAG = MainActivity.class.getSimpleName();
 
-	ViewPager mViewPager;
+	DisableableViewPager mViewPager;
 	MainScreenPagerAdapter mPagerAdapter;
 	
 	@Override
@@ -50,7 +51,7 @@ public class MainActivity extends FragmentActivity {
 		//mImageInbox = (ImageView) findViewById(R.id.image_inbox);
 		//mPolaroidBorder = findViewById(R.id.polaroid_border);
 
-		mViewPager = (ViewPager) findViewById(R.id.view_pager);
+		mViewPager = (DisableableViewPager) findViewById(R.id.view_pager);
 		mPagerAdapter = new MainScreenPagerAdapter(getSupportFragmentManager());
 		mViewPager.setAdapter(mPagerAdapter);
 
@@ -59,7 +60,7 @@ public class MainActivity extends FragmentActivity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	}
 
-	public ViewPager getViewPager() {
+	public DisableableViewPager getViewPager() {
 		return mViewPager;
 	}
 }

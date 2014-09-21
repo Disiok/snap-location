@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.app.FragmentTransaction;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -59,6 +60,12 @@ public class ControlFragment extends Fragment {
 		return rootView;
 	}
 
+	public void reactivateCamera() {
+		((ImageView) getView().findViewById(R.id.capture_button)).setVisibility(View.VISIBLE);
+		((MainActivity) getActivity()).getViewPager().setPagingEnabled(true);
+		mCamera.startPreview();
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle bundle) {
 		super.onActivityCreated(bundle);
@@ -81,6 +88,7 @@ public class ControlFragment extends Fragment {
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this.getActivity());
 		FrameLayout cameraViewContainer = (FrameLayout)getView().findViewById(R.id.camera_preview);
+		final ControlFragment safeSelf = this;
 		cameraViewContainer.addView(mPreview);
 
 		// Create picture callback
@@ -96,6 +104,13 @@ public class ControlFragment extends Fragment {
 							// show friend list with check marks
 							// send button at the bottom
 							//new UploadMediaTask(data, "htn", gps.getLatitude(), gps.getLongitude()).execute();
+							((ImageView) getView().findViewById(R.id.capture_button)).setVisibility(View.GONE);
+							((MainActivity) getActivity()).getViewPager().setPagingEnabled(false);
+							getActivity().getSupportFragmentManager().beginTransaction()
+								.add(R.id.preview_container, new FriendFragment(true, safeSelf))
+								.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK)
+								.addToBackStack("asdf")
+								.commit();
 						}
 						else{
 		                    // can't get location
