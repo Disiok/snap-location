@@ -105,13 +105,14 @@ public class FriendFragment extends Fragment{
 					}
 				}
 				if (selected_friends.size() > 0) {
+					LoadingFragment loading = new LoadingFragment();
+					((MainActivity) getActivity()).setBackButtonLock(true);
 					getActivity().getSupportFragmentManager().beginTransaction()
-						.add(R.id.preview_container, new LoadingFragment())
+						.add(R.id.preview_container, loading)
 						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-						.addToBackStack(null)
 						.commit();
 					new UploadMediaTask(
-							safeSelf.getActivity(),
+							safeSelf.getActivity(), loading,
 							mControlFragment.getLastPictureData(),
 							"htn", selected_friends.toArray(),
 							mControlFragment.getLastLatitude(),
@@ -124,10 +125,10 @@ public class FriendFragment extends Fragment{
 	public void resolveFriends() {
 		Log.d(TAG, "Resolving friends");
 		LoadingFragment loading = new LoadingFragment();
+		((MainActivity) getActivity()).setBackButtonLock(true);
 		getActivity().getSupportFragmentManager().beginTransaction()
 			.add(R.id.preview_container, loading)
 			.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-			.addToBackStack(null)
 			.commit();
 		mFriends = new ArrayList<Friend>();
 		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask(loading);
@@ -192,6 +193,7 @@ public class FriendFragment extends Fragment{
 	    	 
 	    	 mAdapter.notifyDataSetChanged();
 	    	 getActivity().getSupportFragmentManager().beginTransaction().remove(this.loadingFragment).commit();
+	    	 ((MainActivity) getActivity()).setBackButtonLock(false);
 	     }
 		
 	}

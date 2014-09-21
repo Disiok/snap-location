@@ -42,6 +42,7 @@ public class MainActivity extends FragmentActivity {
 
 	DisableableViewPager mViewPager;
 	MainScreenPagerAdapter mPagerAdapter;
+	boolean mBackLocked = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,5 +64,16 @@ public class MainActivity extends FragmentActivity {
 
 	public DisableableViewPager getViewPager() {
 		return mViewPager;
+	}
+	
+	public void setBackButtonLock(boolean lock) {
+		mBackLocked = lock;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if (!mBackLocked) {
+			super.onBackPressed();
+		}
 	}
 }

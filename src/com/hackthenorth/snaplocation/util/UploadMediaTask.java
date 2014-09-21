@@ -13,6 +13,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.hackthenorth.snaplocation.view.LoadingFragment;
+import com.hackthenorth.snaplocation.view.MainActivity;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Base64;
@@ -25,8 +28,9 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 	private byte[] mData;
 	private Object[] mRecipients;
 	private Activity mActivity;
+	private LoadingFragment mLoading;
 	
-	public UploadMediaTask(Activity activity, byte[] data, String user, Object[] recipients, double latitude, double longitude){
+	public UploadMediaTask(Activity activity, LoadingFragment loadingFragment, byte[] data, String user, Object[] recipients, double latitude, double longitude){
 		super();
 		this.mUser = user;
 		this.mData = data;
@@ -34,6 +38,7 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 		this.mLongitude = longitude;
 		this.mRecipients = recipients;
 		this.mActivity = activity;
+		this.mLoading = loadingFragment;
 	}
 
 	@Override
@@ -80,8 +85,8 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 		} else {
 			Log.d(TAG, "Error while uploading image");
 		}
-		mActivity.onBackPressed();
-		mActivity.onBackPressed();
+		((MainActivity) mActivity).getSupportFragmentManager().beginTransaction().remove(mLoading).commit();
+		((MainActivity) mActivity).setBackButtonLock(false);
 		mActivity.onBackPressed();
 	}
 
