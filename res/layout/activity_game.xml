@@ -20,5 +20,13 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="#ff00ff00" />
+    
+        <ImageView 
+        android:id="@+id/submit_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|right"
+        android:background="#ff00ff00" />
+    
 
 </FrameLayout>

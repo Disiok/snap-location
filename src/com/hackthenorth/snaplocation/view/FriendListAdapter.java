@@ -53,7 +53,7 @@ public class FriendListAdapter extends BaseAdapter{
 		return position;
 	}
 
-	public View getViewForFriend(Friend friend, View convertView, ViewGroup parent) {
+	public View getViewForFriend(final Friend friend, View convertView, ViewGroup parent) {
 		View view;
 		if (convertView == null) {
 			view = LayoutInflater.from(mContext).inflate(R.layout.view_friend, parent, false);
@@ -70,6 +70,8 @@ public class FriendListAdapter extends BaseAdapter{
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(mContext, GameActivity.class);
+					intent.putExtra(GameActivity.EXTRA_USER, "htn");
+					intent.putExtra(GameActivity.EXTRA_OTHER, friend.getUniqueName());
 					mContext.startActivity(intent);
 				}
 			});
@@ -79,6 +81,8 @@ public class FriendListAdapter extends BaseAdapter{
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(mContext, GameActivity.class);
+					intent.putExtra(GameActivity.EXTRA_USER, "htn");
+					intent.putExtra(GameActivity.EXTRA_OTHER, friend.getUniqueName());
 					mContext.startActivity(intent);
 				}
 			});
