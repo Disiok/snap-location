@@ -49,13 +49,13 @@ public class FriendFragment extends Fragment{
 	ArrayList<Friend> mFriends;
 	boolean mFriendsSelectable = false;
 	
-	ControlFragment mControlFragment;
+	PreviewFragment mControlFragment;
 	
 	public FriendFragment(boolean friendsSelectable) {
 		this(friendsSelectable, null);
 	}
 	
-	public FriendFragment(boolean friendsSelectable, ControlFragment controlFragment) {
+	public FriendFragment(boolean friendsSelectable, PreviewFragment controlFragment) {
 		super();
 		mFriendsSelectable = friendsSelectable;
 		mControlFragment = controlFragment;

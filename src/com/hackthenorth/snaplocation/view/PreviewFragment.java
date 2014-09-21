@@ -39,8 +39,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class ControlFragment extends Fragment {
-	public static final String TAG = ControlFragment.class.getSimpleName();
+public class PreviewFragment extends Fragment {
+	public static final String TAG = PreviewFragment.class.getSimpleName();
 	
 	ImageView mCaptureButton;
 	
@@ -104,7 +104,7 @@ public class ControlFragment extends Fragment {
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this.getActivity());
 		FrameLayout cameraViewContainer = (FrameLayout)getView().findViewById(R.id.camera_preview);
-		final ControlFragment safeSelf = this;
+		final PreviewFragment safeSelf = this;
 		cameraViewContainer.addView(mPreview);
 
 		// Create picture callback
