@@ -102,7 +102,7 @@ public class FriendListAdapter extends BaseAdapter{
 					view = convertView;
 				}
 				((TextView) view.findViewById(R.id.profile_display_name)).setText(CurrentUser.getInstance().display_name);
-				((TextView) view.findViewById(R.id.profile_unique_name)).setText(CurrentUser.getInstance().unique_name);
+				((TextView) view.findViewById(R.id.profile_unique_name)).setText("@" + CurrentUser.getInstance().unique_name);
 				return view;
 			case 1:
 				if (convertView == null) {
