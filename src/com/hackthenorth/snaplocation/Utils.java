@@ -59,8 +59,8 @@ public class Utils {
 //		
 //		return mediaFile;
 //	}
-	public static void uploadImage(byte[]data){
-		new UploadImageTask(data,"joseph").execute();
+	public static void uploadImage(byte[]data,double latitude,double longitude){
+		new UploadImageTask(data,"B",latitude,longitude).execute();
 		
 	}
 //	public static boolean saveOutputMedia(byte[] data) {

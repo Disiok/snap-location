@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -11,7 +12,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 	public static final String TAG = MainActivity.class.getSimpleName();
 
 	// View elements
@@ -49,7 +50,20 @@ public class MainActivity extends Activity {
 //				} else {
 //					Toast.makeText(mPreview.getContext(), "Error saving image", Toast.LENGTH_SHORT).show();
 //				}
-				Utils.uploadImage(data);
+				GPSTracker gps = new GPSTracker(getBaseContext());
+				Log.d("Can",gps.canGetLocation()+"");
+				if(gps.canGetLocation()){
+					Log.d("Latitude",""+gps.getLatitude());
+					Log.d("Longitude",""+gps.getLongitude());
+					Utils.uploadImage(data,gps.getLatitude(),gps.getLongitude());
+				}
+				else{
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
+                    gps.showSettingsAlert();
+                }
+				
 			}
 		};
 	}

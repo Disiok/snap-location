@@ -13,18 +13,22 @@ import org.apache.http.impl.client.DefaultHttpClient;
 //import org.apache.http.params.BasicHttpParams;
 import org.apache.http.util.EntityUtils;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 public class UploadImageTask extends AsyncTask<Void,Integer, Long> {
 	private String user;
 	private byte[] image;
-	public UploadImageTask(byte[] image, String user){
+	private double latitude,longitude;
+	public UploadImageTask(byte[] image, String user,double latitude,double longitude){
 		this.user=user;
 		this.image=image;
+		this.latitude=latitude;
+		this.longitude=longitude;
 	}
 	
      protected Long doInBackground(Void... v) {
-    	 String url = "http://test.tniechciol.ca:12345/snap_location/upload_image/";
+    	 String url = "http://test.tniechciol.ca:12345/snap_location/push_image_location/";
     	 String boundary="*****";
  		try {
  		    HttpClient httpclient = new DefaultHttpClient();
@@ -37,8 +41,12 @@ public class UploadImageTask extends AsyncTask<Void,Integer, Long> {
 // 		    reqEntity.setChunked(true); // Send in multiple parts if needed
 // 		    httppost.setEntity(reqEntity);
  		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
- 		    nameValuePairs.add(new BasicNameValuePair("user", user));
- 		    nameValuePairs.add(new BasicNameValuePair("image",new String(image,"UTF-8")));
+ 		    nameValuePairs.add(new BasicNameValuePair("unique_name", user));
+ 		    nameValuePairs.add(new BasicNameValuePair("image",Base64.encodeToString(image, Base64.DEFAULT)));
+ 		    nameValuePairs.add(new BasicNameValuePair("latitude", ""+latitude));
+		    nameValuePairs.add(new BasicNameValuePair("longitude",""+longitude));
+		    nameValuePairs.add(new BasicNameValuePair("recipients", "htn"));
+		    nameValuePairs.add(new BasicNameValuePair("recipients","T"));
  		    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
  		    Log.d("Request","PRESEND");
  		    HttpResponse response = httpclient.execute(httppost);
