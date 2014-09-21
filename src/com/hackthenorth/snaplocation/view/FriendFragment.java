@@ -49,16 +49,16 @@ public class FriendFragment extends Fragment{
 	ArrayList<Friend> mFriends;
 	boolean mFriendsSelectable = false;
 	
-	PreviewFragment mControlFragment;
+	PreviewFragment mPreviewFragment;
 	
 	public FriendFragment(boolean friendsSelectable) {
 		this(friendsSelectable, null);
 	}
 	
-	public FriendFragment(boolean friendsSelectable, PreviewFragment controlFragment) {
+	public FriendFragment(boolean friendsSelectable, PreviewFragment previewFragment) {
 		super();
 		mFriendsSelectable = friendsSelectable;
-		mControlFragment = controlFragment;
+		mPreviewFragment = previewFragment;
 	}
 	
 	@Override
@@ -77,8 +77,8 @@ public class FriendFragment extends Fragment{
 	
 	@Override
 	public void onDestroy() {
-		if (mControlFragment != null) {
-			mControlFragment.reactivateCamera();
+		if (mPreviewFragment != null) {
+			mPreviewFragment.reactivateCamera();
 		}
 		super.onDestroy();
 	}
@@ -117,10 +117,10 @@ public class FriendFragment extends Fragment{
 						.commit();
 					new UploadMediaTask(
 							safeSelf.getActivity(), loading,
-							mControlFragment.getLastPictureData(),
+							mPreviewFragment.getLastPictureData(),
 							CurrentUser.getInstance().unique_name, selected_friends.toArray(),
-							mControlFragment.getLastLatitude(),
-							mControlFragment.getLastLongitude()).execute();
+							mPreviewFragment.getLastLatitude(),
+							mPreviewFragment.getLastLongitude()).execute();
 				}
 			}
 		});
