@@ -123,8 +123,14 @@ public class FriendFragment extends Fragment{
 	
 	public void resolveFriends() {
 		Log.d(TAG, "Resolving friends");
+		LoadingFragment loading = new LoadingFragment();
+		getActivity().getSupportFragmentManager().beginTransaction()
+			.add(R.id.preview_container, loading)
+			.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+			.addToBackStack(null)
+			.commit();
 		mFriends = new ArrayList<Friend>();
-		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask();
+		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask(loading);
 		resolveFriendTask.execute("htn");
 	}
 	public class FriendComparator implements Comparator<Friend> {
@@ -140,7 +146,13 @@ public class FriendFragment extends Fragment{
 	    }
 	}
 	public class ResolveFriendsTask extends AsyncTask<String, Void, Boolean> {
-
+		private LoadingFragment loadingFragment;
+		
+		public ResolveFriendsTask(LoadingFragment loadingFragment) {
+			super();
+			this.loadingFragment = loadingFragment;
+		}
+		
 		@Override
 		protected Boolean doInBackground(String... params) {
 	        try {
@@ -179,6 +191,7 @@ public class FriendFragment extends Fragment{
 	    	 }
 	    	 
 	    	 mAdapter.notifyDataSetChanged();
+	    	 getActivity().getSupportFragmentManager().beginTransaction().remove(this.loadingFragment).commit();
 	     }
 		
 	}

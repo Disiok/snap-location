@@ -82,6 +82,7 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 		}
 		mActivity.onBackPressed();
 		mActivity.onBackPressed();
+		mActivity.onBackPressed();
 	}
 
 }
