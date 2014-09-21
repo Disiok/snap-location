@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Snap Location</string>
+    <string name="app_name">Pinpoint Me</string>
         <string name="game_name">Game</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

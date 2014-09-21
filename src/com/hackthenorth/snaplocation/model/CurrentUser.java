@@ -35,7 +35,7 @@ public class CurrentUser {
 	public static CurrentUser getInstance() {
 		if (current == null) {
 			current = new CurrentUser();
-			current.unique_name = "htn";
+			current.unique_name = "Bailey";
 		}
 		
 		return current;
