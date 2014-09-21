@@ -18,6 +18,7 @@ import android.util.Base64;
 import android.util.Log;
 
 public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
+	public static final String TAG = UploadMediaTask.class.getSimpleName();
 	private String mUser;
 	private double mLatitude, mLongitude;
 	private byte[] mData;
@@ -34,10 +35,11 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 	protected Boolean doInBackground(Void... params) {
 		try {
 			// Add your data
+			String url = "http://test.tniechciol.ca:12345/snap_location/push_image_location/";
 			String encoded = Base64.encodeToString(mData, Base64.DEFAULT);
 
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/upload_image/");
+			HttpPost postRequest = new HttpPost(url);
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("unique_name", mUser));
@@ -66,6 +68,11 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 	}
 
 	protected void onPostExecute(Boolean success) {
+		if (success) {
+			Log.d(TAG, "Successfully uploaded the image");
+		} else {
+			Log.d(TAG, "Error while uploading image");
+		}
 	}
 
 }
