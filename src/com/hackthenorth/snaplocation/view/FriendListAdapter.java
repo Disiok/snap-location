@@ -74,7 +74,7 @@ public class FriendListAdapter extends BaseAdapter{
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(mContext, GameActivity.class);
-					intent.putExtra(GameActivity.EXTRA_USER, "htn");
+					intent.putExtra(GameActivity.EXTRA_USER, CurrentUser.getInstance().unique_name);
 					intent.putExtra(GameActivity.EXTRA_OTHER, friend.getUniqueName());
 					mContext.startActivity(intent);
 				}
