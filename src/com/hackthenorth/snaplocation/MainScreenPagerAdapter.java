@@ -7,8 +7,8 @@ import android.util.Log;
 
 public class MainScreenPagerAdapter extends FragmentPagerAdapter{
 	public static final String TAG = MainScreenPagerAdapter.class.getSimpleName();
-	public static final int FRAGMENT_CONTROL = 0;
-	public static final int FRAGMENT_INBOX = 1;
+	public static final int FRAGMENT_INBOX = 0;
+	public static final int FRAGMENT_CONTROL = 1;
 	public static final int NUM_PAGES = 2;
 
 	public MainScreenPagerAdapter(FragmentManager fm) {
