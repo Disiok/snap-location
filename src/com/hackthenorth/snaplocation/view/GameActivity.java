@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.util.GPSTracker;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -125,6 +127,12 @@ public class GameActivity extends Activity {
 			if (mGoogleMap == null) {
 				Toast.makeText(this, "Sorry! unable to create maps",
 						Toast.LENGTH_SHORT).show();
+			} else {
+				GPSTracker gps = new GPSTracker(this);
+				if(gps.canGetLocation()){
+					LatLng ll = new LatLng(gps.getLatitude(), gps.getLongitude());
+					mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 20));
+				}
 			}
 		}
 	}
