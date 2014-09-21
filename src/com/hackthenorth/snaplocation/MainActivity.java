@@ -19,6 +19,7 @@ import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -43,7 +44,7 @@ public class MainActivity extends FragmentActivity {
 	CameraPreview mPreview;
 	View mPolaroidBorder;
 	ImageView mImageInbox;
-//	ImageView mCaptureButton;
+
 
 	PictureCallback mPictureCallback;
 
@@ -61,9 +62,6 @@ public class MainActivity extends FragmentActivity {
 		// Set fullscreen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
-//		// Resolve view elements
-//		mCaptureButton = (ImageView) findViewById(R.id.capture_button);
 		
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this);
@@ -111,10 +109,7 @@ public class MainActivity extends FragmentActivity {
 		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void onPageScrollStateChanged(int arg0) {}
 
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
@@ -122,10 +117,7 @@ public class MainActivity extends FragmentActivity {
 					mPolaroidBorder.setAlpha(arg1);
 				} else {
 					mPolaroidBorder.setAlpha(1 - arg1);
-				}
-				
-				// TODO Auto-generated method stub
-				
+				}				
 			}
 
 			@Override
@@ -140,10 +132,13 @@ public class MainActivity extends FragmentActivity {
 						
 					});
 				} else {
-//					mPolaroidBorder.setVisibility(View.INVISIBLE);
+					new Handler().postDelayed(new Runnable() {
+						public void run() {
+							mCamera.startPreview();
+						}
+					}, 500);
 				}
 			}
-			
 		});
 		
 	}
@@ -208,5 +203,9 @@ public class MainActivity extends FragmentActivity {
 	    		 Log.d(TAG, "Uploading an image to the server failed");
 	    	 }
 	     }
+
 	}
+    public ViewPager getViewPager() {
+   	 return mViewPager;
+    }
 }

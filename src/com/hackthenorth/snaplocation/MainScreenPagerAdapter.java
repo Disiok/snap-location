@@ -19,7 +19,7 @@ public class MainScreenPagerAdapter extends FragmentPagerAdapter{
 	public Fragment getItem(int arg0) {
 		switch (arg0) {
 		case FRAGMENT_PREVIEW: {
-			return new PreviewFragment();
+			return new ControlFragment();
 		}
 		case FRAGMENT_INBOX: {
 			return new FriendFragment();
