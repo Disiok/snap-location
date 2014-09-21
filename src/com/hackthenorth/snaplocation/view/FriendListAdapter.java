@@ -77,15 +77,6 @@ public class FriendListAdapter extends BaseAdapter{
 			});
 		} else {
 			((ImageView) view.findViewById(R.id.friend_counter_background)).setColorFilter(Color.parseColor("#FFFFFF"));
-			view.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(mContext, GameActivity.class);
-					intent.putExtra(GameActivity.EXTRA_USER, "htn");
-					intent.putExtra(GameActivity.EXTRA_OTHER, friend.getUniqueName());
-					mContext.startActivity(intent);
-				}
-			});
 		}
         return view;
 	}

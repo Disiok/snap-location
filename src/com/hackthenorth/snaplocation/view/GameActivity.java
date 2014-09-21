@@ -2,7 +2,9 @@ package com.hackthenorth.snaplocation.view;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -12,6 +14,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,15 +22,23 @@ import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.model.FriendResponse;
+import com.hackthenorth.snaplocation.model.ImageResponse;
 import com.hackthenorth.snaplocation.util.GPSTracker;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -95,6 +106,8 @@ public class GameActivity extends Activity {
 				}
 			}
 		});
+		
+		new GetImageTask(userName, otherName).execute();
 	}
 
 	@Override
@@ -112,10 +125,6 @@ public class GameActivity extends Activity {
 						Toast.LENGTH_SHORT).show();
 			}
 		});
-	}
-
-	public void getImage() {
-		// TODO do something with server to get image and update the imageview
 	}
 
 	private void initilizeMap() {
@@ -188,5 +197,88 @@ public class GameActivity extends Activity {
 			}
 		}
 	}
+	
+	public class GetImageTask extends AsyncTask<Void, Void, String>{
+		String mUser;
+		String mOther;
+		public GetImageTask(String user, String other) {
+			mUser = user;
+			mOther = other;
+		}
+		
+		@Override
+		protected String doInBackground(Void... params) {
+			try {
+				// Add your data
+				String url = "http://test.tniechciol.ca:12345/snap_location/next_image/";
+
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpPost postRequest = new HttpPost(url);
+				
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("unique_name", mUser));
+			    nameValuePairs.add(new BasicNameValuePair("friend_name", mOther));
+				postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+				HttpResponse response = httpClient.execute(postRequest);
+				String jsonString = EntityUtils.toString(response.getEntity());
+
+				Log.i("json_string", jsonString);
+				ImageResponse imageResponse = new Gson().fromJson(jsonString, ImageResponse.class);
+				
+				
+				URL mediaUrl = new URL("http://test.tniechciol.ca:12345" + imageResponse.getUrl());
+				Log.d(TAG, "Response: " + mediaUrl);
+				
+				// Read all the text returned by the server
+			    BufferedReader in = new BufferedReader(new InputStreamReader(mediaUrl.openStream()));
+			    StringBuilder total = new StringBuilder();
+			    String str;
+			    while ((str = in.readLine()) != null) {
+			    	total.append(str + "\n");
+			        // str is one line of text; readLine() strips the newline character(s)
+			    }
+			    in.close();
+			    
+				Log.d(TAG, "Encoded String: " + total);
+			    
+				
+				return total.toString();
+			} catch (Exception e) {
+				// handle exception here
+				Log.e(e.getClass().getName(), e.getMessage());
+				return null;
+			}
+		}
+		protected void onPostExecute(String string) {
+			if (string != null) {
+				Log.d(TAG, "Successfully getting image");
+				// find the width and height of the screen:
+				Display d = getWindowManager().getDefaultDisplay();
+				int x = d.getWidth();
+				int y = d.getHeight();
+				
+				byte[] data = Base64.decode(string, Base64.DEFAULT);
+				Bitmap bMap = BitmapFactory.decodeByteArray(data, 0, data.length);
+				
+				// scale it to fit the screen, x and y swapped because my image is wider than it is tall
+				Bitmap scaledBitmap = Bitmap.createScaledBitmap(bMap, y, x, true);
+				 
+				// create a matrix object
+				Matrix matrix = new Matrix();
+				matrix.postRotate(90); // anti-clockwise by 90 degrees
+				 
+				// create a new bitmap from the original using the matrix to transform the result
+				Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap , 0, 0, scaledBitmap .getWidth(), scaledBitmap .getHeight(), matrix, true);
+				 
+				// display the rotated bitmap
+				mGameImage.setImageBitmap(rotatedBitmap);
+				
+			} else {
+				Log.d(TAG, "Error while getting image");
+			}
+		}
+	}
+	
 
 }
