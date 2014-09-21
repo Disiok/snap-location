@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.layout;
 import com.hackthenorth.snaplocation.model.FriendResponse;
+import com.hackthenorth.snaplocation.model.GuessResponse;
 import com.hackthenorth.snaplocation.model.ImageResponse;
 import com.hackthenorth.snaplocation.util.GPSTracker;
 
@@ -140,13 +141,13 @@ public class GameActivity extends Activity {
 				GPSTracker gps = new GPSTracker(this);
 				if(gps.canGetLocation()){
 					LatLng ll = new LatLng(gps.getLatitude(), gps.getLongitude());
-					mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 20));
+					mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 50));
 				}
 			}
 		}
 	}
 	
-	public class GuessLocationTask extends AsyncTask<Void, Void, Boolean>{
+	public class GuessLocationTask extends AsyncTask<Void, Void, LatLng>{
 		String mUser;
 		String mOther;
 		LatLng mCoordinates;
@@ -157,7 +158,7 @@ public class GameActivity extends Activity {
 		}
 		
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected LatLng doInBackground(Void... params) {
 			try {
 				// Add your data
 				String url = "http://test.tniechciol.ca:12345/snap_location/guess_location/";
@@ -172,25 +173,23 @@ public class GameActivity extends Activity {
 			    nameValuePairs.add(new BasicNameValuePair("guess_lon", "" + mCoordinates.longitude));
 				postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+				
+				// Handle response
 				HttpResponse response = httpClient.execute(postRequest);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(
-						response.getEntity().getContent(), "UTF-8"));
-				String sResponse;
-				StringBuilder s = new StringBuilder();
+				String jsonString = EntityUtils.toString(response.getEntity());
 
-				while ((sResponse = reader.readLine()) != null) {
-					s = s.append(sResponse);
-				}
-				Log.d(TAG, "Response: " + s);
-				return true;
+				GuessResponse guessResponse = new Gson().fromJson(jsonString, GuessResponse.class);
+				return guessResponse.getCoordinates();
 			} catch (Exception e) {
 				// handle exception here
 				Log.e(e.getClass().getName(), e.getMessage());
-				return false;
+				return null;
 			}
 		}
-		protected void onPostExecute(Boolean success) {
-			if (success) {
+		protected void onPostExecute(LatLng coordinate) {
+			if (coordinate != null) {
+				mGoogleMap.addMarker(new MarkerOptions().position(coordinate).title("Correct location"));
+				mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coordinate, 50));
 				Log.d(TAG, "Successfully guessed the location");
 			} else {
 				Log.d(TAG, "Error while guessing location");
