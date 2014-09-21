@@ -13,13 +13,16 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -38,7 +41,9 @@ public class MainActivity extends FragmentActivity {
 	// View elements
 	Camera mCamera;
 	CameraPreview mPreview;
-	ImageView mCaptureButton;
+	View mPolaroidBorder;
+	ImageView mImageInbox;
+//	ImageView mCaptureButton;
 
 	PictureCallback mPictureCallback;
 
@@ -47,6 +52,8 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		mImageInbox = (ImageView) findViewById(R.id.image_inbox);
+		mPolaroidBorder = findViewById(R.id.polaroid_border);
 		mViewPager = (ViewPager) findViewById(R.id.view_pager);
 		mPagerAdapter = new MainScreenPagerAdapter(getSupportFragmentManager());
 		mViewPager.setAdapter(mPagerAdapter);
@@ -55,12 +62,12 @@ public class MainActivity extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-		// Resolve view elements
-		mCaptureButton = (ImageView) getView().findViewById(R.id.capture_button);
+//		// Resolve view elements
+//		mCaptureButton = (ImageView) findViewById(R.id.capture_button);
 		
 		// Create our Preview view and set it as the content of our activity.
-		mPreview = new CameraPreview(getActivity());
-		FrameLayout cameraViewContainer = (FrameLayout) getView().findViewById(R.id.camera_preview);
+		mPreview = new CameraPreview(this);
+		FrameLayout cameraViewContainer = (FrameLayout) findViewById(R.id.camera_preview);
 		cameraViewContainer.addView(mPreview);
 
 		// Create picture callback
@@ -101,18 +108,42 @@ public class MainActivity extends FragmentActivity {
 		// Bind preview
 		mPreview.setCamera(mCamera);
 		
-		mCaptureButton.setOnClickListener(new OnClickListener() {
+		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+
 			@Override
-			public void onClick(View v) {
-				// get an image from the camera
-				mCamera.autoFocus(new AutoFocusCallback() {
-					@Override
-					public void onAutoFocus(boolean success, Camera camera) {
-						mCamera.takePicture(null, null, mPictureCallback);
-					}
-					
-				});
+			public void onPageScrollStateChanged(int arg0) {
+				// TODO Auto-generated method stub
+				
 			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				if (arg0 == 0) {
+					mPolaroidBorder.setAlpha(arg1);
+				} else {
+					mPolaroidBorder.setAlpha(1 - arg1);
+				}
+				
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onPageSelected(int arg0) {
+				if (arg0 == 1) {
+					// get an image from the camera
+					mCamera.autoFocus(new AutoFocusCallback() {
+						@Override
+						public void onAutoFocus(boolean success, Camera camera) {
+							mCamera.takePicture(null, null, mPictureCallback);
+						}
+						
+					});
+				} else {
+//					mPolaroidBorder.setVisibility(View.INVISIBLE);
+				}
+			}
+			
 		});
 		
 	}
