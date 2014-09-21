@@ -16,6 +16,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import android.graphics.Color;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +25,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -32,6 +37,7 @@ import com.hackthenorth.snaplocation.R.id;
 import com.hackthenorth.snaplocation.R.layout;
 import com.hackthenorth.snaplocation.model.Friend;
 import com.hackthenorth.snaplocation.model.FriendResponse;
+import com.hackthenorth.snaplocation.util.UploadMediaTask;
 
 public class FriendFragment extends Fragment{
 	public static final String TAG = FriendFragment.class.getSimpleName();
@@ -83,6 +89,30 @@ public class FriendFragment extends Fragment{
 		mAdapter = new FriendListAdapter(getActivity(), mFriends, mFriendsSelectable);
 		mListView = (ListView) getView().findViewById(R.id.friend_list_view);
 		mListView.setAdapter(mAdapter);
+		
+		final FriendFragment safeSelf = this;
+		
+		Button sendButton = (Button) getView().findViewById(R.id.select_friends_button);
+		sendButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ArrayList<String> selected_friends = new ArrayList<String>();
+				for (int i = 0; i < mAdapter.getCount(); i++) {
+					Friend friend = (Friend)mAdapter.getItem(i);
+					if (friend.isSelected()) {
+						selected_friends.add(friend.getUniqueName());
+					}
+				}
+				if (selected_friends.size() > 0) {
+					new UploadMediaTask(
+							safeSelf.getActivity(),
+							mControlFragment.getLastPictureData(),
+							"htn", selected_friends.toArray(),
+							mControlFragment.getLastLatitude(),
+							mControlFragment.getLastLongitude()).execute();
+				}
+			}
+		});
 	}
 	
 	public void resolveFriends() {

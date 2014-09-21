@@ -43,6 +43,7 @@
         android:layout_gravity="center_vertical">
         
         <CheckBox
+            android:id="@+id/friend_checkbox_box"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:scaleX="2"

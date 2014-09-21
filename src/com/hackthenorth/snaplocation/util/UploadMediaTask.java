@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -22,13 +23,17 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 	private String mUser;
 	private double mLatitude, mLongitude;
 	private byte[] mData;
+	private Object[] mRecipients;
+	private Activity mActivity;
 	
-	public UploadMediaTask(byte[] data, String user, double latitude, double longitude){
+	public UploadMediaTask(Activity activity, byte[] data, String user, Object[] recipients, double latitude, double longitude){
 		super();
 		this.mUser = user;
 		this.mData = data;
 		this.mLatitude = latitude;
 		this.mLongitude = longitude;
+		this.mRecipients = recipients;
+		this.mActivity = activity;
 	}
 
 	@Override
@@ -44,8 +49,9 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("unique_name", mUser));
 			nameValuePairs.add(new BasicNameValuePair("image", encoded));
-		    nameValuePairs.add(new BasicNameValuePair("recipients", "B"));
-		    nameValuePairs.add(new BasicNameValuePair("recipients", "T"));
+			for (int i = 0; i < mRecipients.length; i++) {
+				nameValuePairs.add(new BasicNameValuePair("recipients", (String)mRecipients[i]));
+			}
  		    nameValuePairs.add(new BasicNameValuePair("latitude", "" + mLatitude));
 		    nameValuePairs.add(new BasicNameValuePair("longitude", "" + mLongitude));
 			postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -74,6 +80,7 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 		} else {
 			Log.d(TAG, "Error while uploading image");
 		}
+		mActivity.onBackPressed();
 	}
 
 }

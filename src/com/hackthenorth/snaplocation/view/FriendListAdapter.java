@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -78,6 +81,16 @@ public class FriendListAdapter extends BaseAdapter{
 			view = getViewForFriend(friend, convertView, parent);
 			((FrameLayout) view.findViewById(R.id.friend_checkbox)).setVisibility(View.VISIBLE);
 			((FrameLayout) view.findViewById(R.id.friend_pending_counter)).setVisibility(View.GONE);
+			
+			CheckBox check = (CheckBox)view.findViewById(R.id.friend_checkbox_box);
+			final Friend finalFriend = friend;
+			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			        @Override
+			        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			            finalFriend.setSelected(isChecked);
+			        }
+			    });
+			
 			return view;
 		} else {
 			switch (position) {

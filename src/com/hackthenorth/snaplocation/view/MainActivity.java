@@ -54,6 +54,7 @@ public class MainActivity extends FragmentActivity {
 		mViewPager = (DisableableViewPager) findViewById(R.id.view_pager);
 		mPagerAdapter = new MainScreenPagerAdapter(getSupportFragmentManager());
 		mViewPager.setAdapter(mPagerAdapter);
+		mViewPager.setCurrentItem(1);
 
 		// Set fullscreen
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
