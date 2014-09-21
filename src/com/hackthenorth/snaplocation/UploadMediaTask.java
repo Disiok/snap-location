@@ -59,6 +59,7 @@ public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
 			while ((sResponse = reader.readLine()) != null) {
 				s = s.append(sResponse);
 			}
+			Log.d(TAG, "Response: " + s);
 			return true;
 		} catch (Exception e) {
 			// handle exception here
