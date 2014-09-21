@@ -36,6 +36,7 @@ import com.google.gson.Gson;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.id;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.model.CurrentUser;
 import com.hackthenorth.snaplocation.model.Friend;
 import com.hackthenorth.snaplocation.model.FriendResponse;
 import com.hackthenorth.snaplocation.util.UploadMediaTask;
@@ -87,6 +88,9 @@ public class FriendFragment extends Fragment{
 		super.onActivityCreated(savedInstanceState);
 		
 		resolveFriends();
+		if (!mFriendsSelectable) {
+			resolveProfile();
+		}
 		mAdapter = new FriendListAdapter(getActivity(), mFriends, mFriendsSelectable);
 		mListView = (ListView) getView().findViewById(R.id.friend_list_view);
 		mListView.setAdapter(mAdapter);
@@ -114,12 +118,16 @@ public class FriendFragment extends Fragment{
 					new UploadMediaTask(
 							safeSelf.getActivity(), loading,
 							mControlFragment.getLastPictureData(),
-							"htn", selected_friends.toArray(),
+							CurrentUser.getInstance().unique_name, selected_friends.toArray(),
 							mControlFragment.getLastLatitude(),
 							mControlFragment.getLastLongitude()).execute();
 				}
 			}
 		});
+	}
+	
+	public void resolveProfile() {
+		CurrentUser.getInstance().getProfileData(getActivity());
 	}
 	
 	public void resolveFriends() {
@@ -132,7 +140,7 @@ public class FriendFragment extends Fragment{
 			.commit();
 		mFriends = new ArrayList<Friend>();
 		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask(loading);
-		resolveFriendTask.execute("htn");
+		resolveFriendTask.execute(CurrentUser.getInstance().unique_name);
 	}
 	public class FriendComparator implements Comparator<Friend> {
 	    @Override

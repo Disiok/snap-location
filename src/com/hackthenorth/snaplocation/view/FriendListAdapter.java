@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.id;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.model.CurrentUser;
 import com.hackthenorth.snaplocation.model.Friend;
 
 import android.content.Context;
@@ -100,8 +101,8 @@ public class FriendListAdapter extends BaseAdapter{
 				} else {
 					view = convertView;
 				}
-				((TextView) view.findViewById(R.id.profile_display_name)).setText("Hack The North");
-				((TextView) view.findViewById(R.id.profile_unique_name)).setText("@htn");
+				((TextView) view.findViewById(R.id.profile_display_name)).setText(CurrentUser.getInstance().display_name);
+				((TextView) view.findViewById(R.id.profile_unique_name)).setText(CurrentUser.getInstance().unique_name);
 				return view;
 			case 1:
 				if (convertView == null) {
