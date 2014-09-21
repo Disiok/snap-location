@@ -52,12 +52,28 @@ public class ControlFragment extends Fragment {
 
 	PictureCallback mPictureCallback;
 	
+	byte[] mPictureData;
+	double mLatitude;
+	double mLongitude;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// The last two arguments ensure LayoutParams are inflated
 		// properly.
 		View rootView = inflater.inflate(R.layout.fragment_control, container, false);
 		return rootView;
+	}
+	
+	public byte[] getLastPictureData() {
+		return mPictureData;
+	}
+	
+	public double getLastLongitude() {
+		return mLongitude;
+	}
+	
+	public double getLastLatitude() {
+		return mLatitude;
 	}
 
 	public void reactivateCamera() {
@@ -101,15 +117,17 @@ public class ControlFragment extends Fragment {
 						if(gps.canGetLocation()){
 							Log.d("Latitude", "" + gps.getLatitude());
 							Log.d("Longitude", "" + gps.getLongitude());
+							mPictureData = data;
+							mLatitude = gps.getLatitude();
+							mLongitude = gps.getLongitude();
 							// show friend list with check marks
 							// send button at the bottom
-							//new UploadMediaTask(data, "htn", gps.getLatitude(), gps.getLongitude()).execute();
 							((ImageView) getView().findViewById(R.id.capture_button)).setVisibility(View.GONE);
 							((MainActivity) getActivity()).getViewPager().setPagingEnabled(false);
 							getActivity().getSupportFragmentManager().beginTransaction()
 								.add(R.id.preview_container, new FriendFragment(true, safeSelf))
 								.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK)
-								.addToBackStack("asdf")
+								.addToBackStack(null)
 								.commit();
 						}
 						else{

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.id;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.model.CurrentUser;
 import com.hackthenorth.snaplocation.model.Friend;
 
 import android.content.Context;
@@ -15,6 +16,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -89,6 +93,16 @@ public class FriendListAdapter extends BaseAdapter{
 			view = getViewForFriend(friend, convertView, parent);
 			((FrameLayout) view.findViewById(R.id.friend_checkbox)).setVisibility(View.VISIBLE);
 			((FrameLayout) view.findViewById(R.id.friend_pending_counter)).setVisibility(View.GONE);
+			
+			CheckBox check = (CheckBox)view.findViewById(R.id.friend_checkbox_box);
+			final Friend finalFriend = friend;
+			check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			        @Override
+			        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			            finalFriend.setSelected(isChecked);
+			        }
+			    });
+			
 			return view;
 		} else {
 			switch (position) {
@@ -98,8 +112,8 @@ public class FriendListAdapter extends BaseAdapter{
 				} else {
 					view = convertView;
 				}
-				((TextView) view.findViewById(R.id.profile_display_name)).setText("Hack The North");
-				((TextView) view.findViewById(R.id.profile_unique_name)).setText("@htn");
+				((TextView) view.findViewById(R.id.profile_display_name)).setText(CurrentUser.getInstance().display_name);
+				((TextView) view.findViewById(R.id.profile_unique_name)).setText("@" + CurrentUser.getInstance().unique_name);
 				return view;
 			case 1:
 				if (convertView == null) {

@@ -15,7 +15,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.app.FragmentTransaction;
 import android.graphics.Color;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,15 +26,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.hackthenorth.snaplocation.R;
 import com.hackthenorth.snaplocation.R.id;
 import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.model.CurrentUser;
 import com.hackthenorth.snaplocation.model.Friend;
 import com.hackthenorth.snaplocation.model.FriendResponse;
+import com.hackthenorth.snaplocation.util.UploadMediaTask;
 
 public class FriendFragment extends Fragment{
 	public static final String TAG = FriendFragment.class.getSimpleName();
@@ -80,16 +88,59 @@ public class FriendFragment extends Fragment{
 		super.onActivityCreated(savedInstanceState);
 		
 		resolveFriends();
+		if (!mFriendsSelectable) {
+			resolveProfile();
+		}
 		mAdapter = new FriendListAdapter(getActivity(), mFriends, mFriendsSelectable);
 		mListView = (ListView) getView().findViewById(R.id.friend_list_view);
 		mListView.setAdapter(mAdapter);
+		
+		final FriendFragment safeSelf = this;
+		
+		Button sendButton = (Button) getView().findViewById(R.id.select_friends_button);
+		sendButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ArrayList<String> selected_friends = new ArrayList<String>();
+				for (int i = 0; i < mAdapter.getCount(); i++) {
+					Friend friend = (Friend)mAdapter.getItem(i);
+					if (friend.isSelected()) {
+						selected_friends.add(friend.getUniqueName());
+					}
+				}
+				if (selected_friends.size() > 0) {
+					LoadingFragment loading = new LoadingFragment();
+					((MainActivity) getActivity()).setBackButtonLock(true);
+					getActivity().getSupportFragmentManager().beginTransaction()
+						.add(R.id.preview_container, loading)
+						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+						.commit();
+					new UploadMediaTask(
+							safeSelf.getActivity(), loading,
+							mControlFragment.getLastPictureData(),
+							CurrentUser.getInstance().unique_name, selected_friends.toArray(),
+							mControlFragment.getLastLatitude(),
+							mControlFragment.getLastLongitude()).execute();
+				}
+			}
+		});
+	}
+	
+	public void resolveProfile() {
+		CurrentUser.getInstance().getProfileData(getActivity());
 	}
 	
 	public void resolveFriends() {
 		Log.d(TAG, "Resolving friends");
+		LoadingFragment loading = new LoadingFragment();
+		((MainActivity) getActivity()).setBackButtonLock(true);
+		getActivity().getSupportFragmentManager().beginTransaction()
+			.add(R.id.preview_container, loading)
+			.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+			.commit();
 		mFriends = new ArrayList<Friend>();
-		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask();
-		resolveFriendTask.execute("htn");
+		ResolveFriendsTask resolveFriendTask = new ResolveFriendsTask(loading);
+		resolveFriendTask.execute(CurrentUser.getInstance().unique_name);
 	}
 	public class FriendComparator implements Comparator<Friend> {
 	    @Override
@@ -104,7 +155,13 @@ public class FriendFragment extends Fragment{
 	    }
 	}
 	public class ResolveFriendsTask extends AsyncTask<String, Void, Boolean> {
-
+		private LoadingFragment loadingFragment;
+		
+		public ResolveFriendsTask(LoadingFragment loadingFragment) {
+			super();
+			this.loadingFragment = loadingFragment;
+		}
+		
 		@Override
 		protected Boolean doInBackground(String... params) {
 	        try {
@@ -143,6 +200,8 @@ public class FriendFragment extends Fragment{
 	    	 }
 	    	 
 	    	 mAdapter.notifyDataSetChanged();
+	    	 getActivity().getSupportFragmentManager().beginTransaction().remove(this.loadingFragment).commit();
+	    	 ((MainActivity) getActivity()).setBackButtonLock(false);
 	     }
 		
 	}
