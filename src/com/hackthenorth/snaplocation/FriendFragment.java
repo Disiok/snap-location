@@ -16,6 +16,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
+import com.hackthenorth.snaplocation.model.Friend;
+import com.hackthenorth.snaplocation.model.FriendResponse;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
