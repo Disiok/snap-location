@@ -1,6 +1,11 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.view;
 
 import java.util.ArrayList;
+
+import com.hackthenorth.snaplocation.R;
+import com.hackthenorth.snaplocation.R.id;
+import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.model.Friend;
 
 import android.content.Context;
 import android.view.LayoutInflater;

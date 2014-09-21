@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.hardware.Camera;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
@@ -26,6 +25,7 @@ public class Utils {
 		return c; // returns null if camera is unavailable
 	}
 
+	// Unused, for future use
 	public static File getOutputMediaFile() {
 		File mediaStorageDir = new File(
 				Environment
@@ -50,7 +50,8 @@ public class Utils {
 
 		return mediaFile;
 	}
-
+	
+	// Unused, for future use
 	public static boolean saveOutputMedia(byte[] data) {
 		File pictureFile = Utils.getOutputMediaFile();
 		if (pictureFile == null) {

@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.view;
 
 import java.io.IOException;
 

@@ -1,4 +1,11 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.view;
+
+import com.hackthenorth.snaplocation.R;
+import com.hackthenorth.snaplocation.R.id;
+import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.util.GPSTracker;
+import com.hackthenorth.snaplocation.util.Utils;
+import com.hackthenorth.snaplocation.util.UploadMediaTask;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -60,8 +67,14 @@ public class ControlFragment extends Fragment {
 		mCaptureButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ViewPager viewPager = ((MainActivity) getActivity()).getViewPager();
-				viewPager.setCurrentItem(1);
+				// get an image from the camera
+				mCamera.autoFocus(new AutoFocusCallback() {
+					@Override
+					public void onAutoFocus(boolean success, Camera camera) {
+						mCamera.takePicture(null, null, mPictureCallback);
+					}
+
+				});
 			}
 		});
 		
@@ -71,14 +84,27 @@ public class ControlFragment extends Fragment {
 		cameraViewContainer.addView(mPreview);
 
 		// Create picture callback
-		mPictureCallback = new PictureCallback() {
+				mPictureCallback = new PictureCallback() {
 
-			@Override
-			public void onPictureTaken(byte[] data, Camera camera) {
-				UploadMediaTask updateMediaTask = new UploadMediaTask(data);
-				updateMediaTask.execute();
-			}
-		};
+					@Override
+					public void onPictureTaken(byte[] data, Camera camera) {
+						GPSTracker gps = new GPSTracker(getActivity().getBaseContext());
+						Log.d("Can",gps.canGetLocation()+"");
+						if(gps.canGetLocation()){
+							Log.d("Latitude", "" + gps.getLatitude());
+							Log.d("Longitude", "" + gps.getLongitude());
+							// show friend list with check marks
+							// send button at the bottom
+							//new UploadMediaTask(data, "htn", gps.getLatitude(), gps.getLongitude()).execute();
+						}
+						else{
+		                    // can't get location
+		                    // GPS or Network is not enabled
+		                    // Ask user to enable GPS/network in settings
+		                    gps.showSettingsAlert();
+						}
+					}
+				};
 	}
 	
 	@Override
@@ -154,58 +180,5 @@ public class ControlFragment extends Fragment {
 		}
 		// Release preview
 		mPreview.setCamera(null);
-	}
-	public class UploadMediaTask extends AsyncTask<Void, Integer, Boolean> {
-		private byte[] mData;
-		
-		public UploadMediaTask(byte[] data) {
-			super();
-			mData = data;
-		}
-		
-		@Override
-		protected Boolean doInBackground(Void... params) {
-	        try {
-	            // Add your data
-	        	String encoded = Base64.encodeToString(mData, Base64.DEFAULT);
-	        	
-	            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	            nameValuePairs.add(new BasicNameValuePair("unique_name", "htn"));
-	            nameValuePairs.add(new BasicNameValuePair("recipients", "rec1|rec2|rec3|rec4"));
-	            nameValuePairs.add(new BasicNameValuePair("picture", encoded));
-	            nameValuePairs.add(new BasicNameValuePair("latitude", "45.2038123"));
-	            nameValuePairs.add(new BasicNameValuePair("longitude", "32.23829"));
-	            
-	            
-	            HttpClient httpClient = new DefaultHttpClient();
-	            HttpPost postRequest = new HttpPost("http://test.tniechciol.ca:12345/snap_location/upload_image/");
-	            postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-	            HttpResponse response = httpClient.execute(postRequest);
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(
-	                    response.getEntity().getContent(), "UTF-8"));
-	            String sResponse;
-	            StringBuilder s = new StringBuilder();
-	 
-	            while ((sResponse = reader.readLine()) != null) {
-	                s = s.append(sResponse);
-	            }
-	            Log.d(TAG, "Response: " + s);
-	            return true;
-	        } catch (Exception e) {
-	            // handle exception here
-	            Log.e(e.getClass().getName(), e.getMessage());
-	            return false;
-	        }
-		}
-
-	     protected void onPostExecute(Boolean success) {
-	    	 if (success) {
-	    		 Log.d(TAG, "Successfully uploaded an image to the server");
-	    	 } else {
-	    		 Log.d(TAG, "Uploading an image to the server failed");
-	    	 }
-	     }
-
 	}
 }

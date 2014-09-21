@@ -1,4 +1,5 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.model;
+
 
 public class FriendResponse {
 	private Friend[] data;

@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.view;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,14 +13,19 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.content.Context;
+import com.hackthenorth.snaplocation.R;
+import com.hackthenorth.snaplocation.R.id;
+import com.hackthenorth.snaplocation.R.layout;
+import com.hackthenorth.snaplocation.util.GPSTracker;
+import com.hackthenorth.snaplocation.util.UploadMediaTask;
+import com.hackthenorth.snaplocation.util.Utils;
+
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -28,19 +33,15 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class MainActivity extends FragmentActivity {
 	public static final String TAG = MainActivity.class.getSimpleName();
-	
+
 	ViewPager mViewPager;
 	MainScreenPagerAdapter mPagerAdapter;
 	
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,16 +49,17 @@ public class MainActivity extends FragmentActivity {
 		
 		//mImageInbox = (ImageView) findViewById(R.id.image_inbox);
 		//mPolaroidBorder = findViewById(R.id.polaroid_border);
+
 		mViewPager = (ViewPager) findViewById(R.id.view_pager);
 		mPagerAdapter = new MainScreenPagerAdapter(getSupportFragmentManager());
 		mViewPager.setAdapter(mPagerAdapter);
-		
+
 		// Set fullscreen
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	}
-	
-    public ViewPager getViewPager() {
-   	 return mViewPager;
-    }
+
+	public ViewPager getViewPager() {
+		return mViewPager;
+	}
 }

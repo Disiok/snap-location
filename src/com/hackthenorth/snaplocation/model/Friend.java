@@ -1,4 +1,4 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.model;
 
 public class Friend {
 	private String unique_name;

@@ -1,4 +1,7 @@
-package com.hackthenorth.snaplocation;
+package com.hackthenorth.snaplocation.view;
+
+import com.hackthenorth.snaplocation.R;
+import com.hackthenorth.snaplocation.R.layout;
 
 import android.app.Activity;
 import android.os.Bundle;
