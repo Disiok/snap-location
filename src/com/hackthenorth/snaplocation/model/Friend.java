@@ -3,6 +3,7 @@ package com.hackthenorth.snaplocation.model;
 public class Friend {
 	private String unique_name;
 	private String display_name;
+	private int score;
 	private int num_rounds_pending;
 	private boolean selected = false;
 	
@@ -14,6 +15,10 @@ public class Friend {
 	}
 	public int getNumberOfRoundsPending() {
 		return num_rounds_pending;
+	}
+	
+	public int getScore() {
+		return score;
 	}
 	
 	public void setSelected(boolean selected) {

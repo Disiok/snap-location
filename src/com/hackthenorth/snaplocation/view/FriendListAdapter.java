@@ -64,9 +64,10 @@ public class FriendListAdapter extends BaseAdapter{
 		} else {
 			view = convertView;
 		}
-		
+
 		((TextView) view.findViewById(R.id.friend_display_name)).setText(friend.getDisplayName());
 		((TextView) view.findViewById(R.id.friend_unique_name)).setText("@" + friend.getUniqueName());
+		((TextView) view.findViewById(R.id.friend_score)).setText("" + friend.getScore());
 		((TextView) view.findViewById(R.id.friend_pending_rounds)).setText("" + friend.getNumberOfRoundsPending());
 		if (friend.getNumberOfRoundsPending() > 0) {
 			((TextView) view.findViewById(R.id.friend_pending_rounds)).setTextColor(Color.parseColor("#EEEEEE"));
